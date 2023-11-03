@@ -11,6 +11,7 @@
               <Static id="Static01" taborder="0" text="비밀번호" left="118" top="109" width="60" height="20" background="darkblue" padding="0px 0px 0px 5px" color="aliceblue"/>
               <Edit id="edPw" taborder="2" left="180" top="109" width="140" height="20" right="" bottom="" value="test1"/>
               <Button id="btnLogin" taborder="4" text="로그인" left="322" top="87" width="71" height="41" onclick="divLogin_btnLogin_onclick" borderRadius="5px"/>
+              <Button id="btn_join" taborder="5" text="헬스체크테스트" left="121" top="140" width="160" height="39" onclick="divLogin_btn_join_onclick"/>
             </Layout>
           </Layouts>
         </Div>
@@ -194,8 +195,36 @@ this.fnCallback = function(svcID, errorCode, errorMsg)
 		case "save":
 			this.fnSearch();//재조회
 			break;
+		
+		case "healthCheck":
+			//재조회
+			trace(this.dsList.getColumn(0,"result"));
+			break;
 	}
-};]]></Script>
+};
+this.divLogin_btn_join_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	var strSvcId    = "healthCheck";
+	var strSvcUrl   = "healthCheck.do";
+	var inData      = "";
+	var outData     = "dsList=dsList";
+	var strArg      = "";
+	var callBackFnc = "fnCallback";
+	
+	this.dsList.clearData();
+	//생략가능
+	var isAsync   = true;
+	var nDataType = 0;	
+	
+	this.gfnTransaction( strSvcId , 	// transaction을 구분하기 위한 svc id값
+								strSvcUrl , 	// trabsaction을 요청할 주소
+								inData , 		// 입력값으로 보낼 dataset id , a=b형태로 실제이름과 입력이름을 매칭
+								outData , 		// 처리결과값으로 받을 dataset id, a=b형태로 실제이름과 입력이름을 매칭
+								strArg, 			// 입력갑스로 보낼 arguments, strFormData="20120607"
+								callBackFnc 	// trnsaction의 결과를 받을 Function 이름
+								); // 통신방법 정의 [생략가능]z
+};
+]]></Script>
     <Objects>
       <Dataset id="dsSearch">
         <ColumnInfo>
@@ -209,7 +238,11 @@ this.fnCallback = function(svcID, errorCode, errorMsg)
           </Row>
         </Rows>
       </Dataset>
-      <Dataset id="dsList"/>
+      <Dataset id="dsList">
+        <ColumnInfo>
+          <Column id="result" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
       <Dataset id="dsSample">
         <ColumnInfo>
           <Column id="level" type="STRING" size="256"/>

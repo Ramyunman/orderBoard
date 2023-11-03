@@ -69,4 +69,10 @@
     <delete id="delete_board_map" parameterType="java.util.Map">
             delete from tbl_board where postId=#{postId}
     </delete>
+    
+    
+    <select id="selectUserCount"  resultType="Integer">
+            SELECT COUNT(*)
+              FROM TB_USER
+    </select>
 </mapper>

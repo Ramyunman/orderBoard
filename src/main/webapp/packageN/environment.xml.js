@@ -25,7 +25,7 @@ if (nexacro.Environment)
         nexacro._addService("lib", "js", "./lib/", "session", null, "", "0", "0");
         nexacro._addService("frame", "form", "./frame/", "session", null, "", "0", "0");
         nexacro._addService("cmm", "form", "./cmm/", "session", null, "", "0", "0");
-        nexacro._addService("svcurl", "JSP", "http://localhost:8080/uiadapter-spring-sample/", "none", null, "", "0", "0");
+        nexacro._addService("svcurl", "JSP", "http://localhost:8080/orderBoard/", "none", null, "", "0", "0");
         nexacro._addService("sample", "form", "./sample/", "session", null, "", "0", "0");
         nexacro._addService("pattern", "form", "./pattern/", "session", null, "", "0", "0");
         nexacro._addService("xcssrc", "file", "./_resource_/_xcss_/", "session", null, "", "", "");

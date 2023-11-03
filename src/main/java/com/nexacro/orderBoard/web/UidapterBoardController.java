@@ -1,5 +1,6 @@
 package com.nexacro.orderBoard.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,13 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.nexacro.orderBoard.object.Board;
-import com.nexacro.orderBoard.service.UidapterBoardService;
-import com.nexacro.uiadapter.spring.core.NexacroException;
-import com.nexacro.uiadapter.spring.core.annotation.ParamDataSet;
-import com.nexacro.uiadapter.spring.core.annotation.ParamVariable;
-import com.nexacro.uiadapter.spring.core.data.NexacroFirstRowHandler;
-import com.nexacro.uiadapter.spring.core.data.NexacroResult;
 import com.nexacro.java.xapi.data.DataSet;
 import com.nexacro.java.xapi.data.DataSetList;
 import com.nexacro.java.xapi.data.PlatformData;
@@ -23,6 +17,13 @@ import com.nexacro.java.xapi.data.Variable;
 import com.nexacro.java.xapi.data.VariableList;
 import com.nexacro.java.xapi.tx.HttpPlatformRequest;
 import com.nexacro.java.xapi.tx.HttpPlatformResponse;
+import com.nexacro.orderBoard.object.Board;
+import com.nexacro.orderBoard.service.UidapterBoardService;
+import com.nexacro.uiadapter.spring.core.NexacroException;
+import com.nexacro.uiadapter.spring.core.annotation.ParamDataSet;
+import com.nexacro.uiadapter.spring.core.annotation.ParamVariable;
+import com.nexacro.uiadapter.spring.core.data.NexacroFirstRowHandler;
+import com.nexacro.uiadapter.spring.core.data.NexacroResult;
 
 /**
  * <pre>
@@ -48,7 +49,22 @@ public class UidapterBoardController {
 
 	@Autowired(required = true)
 	private UidapterBoardService uidapterSampleService;
-
+	
+	
+	@RequestMapping(value = "/orderBoard/healthCheck.do")
+	public NexacroResult healthCheck() throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		HashMap<String,Object> dsList = new HashMap<String,Object>();
+		int userCount = uidapterSampleService.selectUserCount();
+		dsList.put("result",userCount);
+		
+		result.addDataSet("dsList", dsList);
+		
+		System.out.println("__ok__" + dsList.size());
+		return result;
+	}
+	
+	
 	/**
 	 * 
 	 * <pre>

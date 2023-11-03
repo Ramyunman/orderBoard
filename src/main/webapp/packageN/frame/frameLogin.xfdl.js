@@ -24,7 +24,7 @@
 
 
             obj = new Dataset("dsList", this);
-            obj._setContents("");
+            obj._setContents("<ColumnInfo><Column id=\"result\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
             this.addChild(obj.name, obj);
 
 
@@ -69,6 +69,11 @@
             obj.set_taborder("4");
             obj.set_text("로그인");
             obj.set_borderRadius("5px");
+            this.divLogin.addChild(obj.name, obj);
+
+            obj = new Button("btn_join","121","140","160","39",null,null,null,null,null,null,this.divLogin.form);
+            obj.set_taborder("5");
+            obj.set_text("헬스체크테스트");
             this.divLogin.addChild(obj.name, obj);
             // Layout Functions
             //-- Default Layout : this
@@ -273,8 +278,36 @@
         		case "save":
         			this.fnSearch();//재조회
         			break;
+
+        		case "healthCheck":
+        			//재조회
+        			trace(this.dsList.getColumn(0,"result"));
+        			break;
         	}
         };
+        this.divLogin_btn_join_onclick = function(obj,e)
+        {
+        	var strSvcId    = "healthCheck";
+        	var strSvcUrl   = "healthCheck.do";
+        	var inData      = "";
+        	var outData     = "dsList=dsList";
+        	var strArg      = "";
+        	var callBackFnc = "fnCallback";
+
+        	this.dsList.clearData();
+        	//생략가능
+        	var isAsync   = true;
+        	var nDataType = 0;
+
+        	this.gfnTransaction( strSvcId , 	// transaction을 구분하기 위한 svc id값
+        								strSvcUrl , 	// trabsaction을 요청할 주소
+        								inData , 		// 입력값으로 보낼 dataset id , a=b형태로 실제이름과 입력이름을 매칭
+        								outData , 		// 처리결과값으로 받을 dataset id, a=b형태로 실제이름과 입력이름을 매칭
+        								strArg, 			// 입력갑스로 보낼 arguments, strFormData="20120607"
+        								callBackFnc 	// trnsaction의 결과를 받을 Function 이름
+        								); // 통신방법 정의 [생략가능]z
+        };
+
         });
         
         // Regist UI Components Event
@@ -283,6 +316,7 @@
             this.addEventHandler("onload",this.form_onload,this);
             this.addEventHandler("onsize",this.Form_onsize,this);
             this.divLogin.form.btnLogin.addEventHandler("onclick",this.divLogin_btnLogin_onclick,this);
+            this.divLogin.form.btn_join.addEventHandler("onclick",this.divLogin_btn_join_onclick,this);
         };
         this.loadIncludeScript("frameLogin.xfdl");
         this.loadPreloadList();

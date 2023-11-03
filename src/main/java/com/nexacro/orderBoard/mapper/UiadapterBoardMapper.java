@@ -40,4 +40,6 @@ public interface UiadapterBoardMapper {
 	public void update_board_map(Map<String, Object> board);
 
 	public void delete_board_map(Map<String, Object> board);
+	
+	public int selectUserCount();
 }

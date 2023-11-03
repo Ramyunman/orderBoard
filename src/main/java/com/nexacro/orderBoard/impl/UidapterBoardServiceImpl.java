@@ -87,4 +87,12 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 			}
 		}
 	}
+	
+	
+	@Override
+	public int selectUserCount() {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		
+		return mapper.selectUserCount();
+	}
 }

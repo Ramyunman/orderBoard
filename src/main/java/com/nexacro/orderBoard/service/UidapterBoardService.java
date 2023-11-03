@@ -30,4 +30,6 @@ public interface UidapterBoardService {
 	void update_datalist(List<Board> boardList);
 
 	void update_datalist_map(List<Map<String, Object>> boardList);
+	
+	int selectUserCount();
 }
