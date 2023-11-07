@@ -1,6 +1,7 @@
 package com.nexacro.orderBoard.web;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,17 @@ public class UidapterBoardController {
 	@Autowired(required = true)
 	private UidapterBoardService uidapterSampleService;
 	
+	@RequestMapping(value = "/orderBoard/selectCommonCode.do")
+	public NexacroResult selectCommonCode(@ParamDataSet(name = "ds_search") Map<String,Object> ds_search) throws NexacroException {
+		
+		NexacroResult result = new NexacroResult();	// return 값을 세팅하기 위한 객체 생성
+		ArrayList<Map<String,Object>> ds_commonCode = new ArrayList<Map<String,Object>>();	// return 값 ds_ordStatCombo 객체 생성
+				
+		ds_commonCode = uidapterSampleService.selectCommonCode(ds_search);	// 요청 처리를 Service로 이관
+																			// Service로 부터 받아온 결과 값을 ds_commonCode에 삽입
+		result.addDataSet("ds_commonCode", ds_commonCode);	// return 값 세팅
+		return result;	// 회신
+	}
 	
 	@RequestMapping(value = "/orderBoard/healthCheck.do")
 	public NexacroResult healthCheck() throws NexacroException {

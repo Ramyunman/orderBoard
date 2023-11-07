@@ -19,7 +19,14 @@
             }
             
             // Object(Dataset, ExcelExportObject) Initialize
+            obj = new Dataset("ds_searchCombo", this);
+            obj._setContents("<ColumnInfo><Column id=\"CD_VAL\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
 
+
+            obj = new Dataset("ds_ordStatCombo", this);
+            obj._setContents("<ColumnInfo><Column id=\"CD_VAL1\" type=\"STRING\" size=\"256\"/><Column id=\"CD_NM1\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
             
             // UI Components Initialize
             obj = new Static("sta02","150","-1","1130","111",null,null,null,null,null,null,this);
@@ -68,12 +75,10 @@
 
             obj = new Combo("cbo_ordStat","590","52","177","42",null,null,null,null,null,null,this);
             obj.set_taborder("6");
-            obj.set_codecolumn("codecolumn");
-            obj.set_datacolumn("datacolumn");
+            obj.set_codecolumn("CD_VAL1");
+            obj.set_datacolumn("CD_NM1");
             obj.set_displaynulltext("선택");
-            var cbo_ordStat_innerdataset = new nexacro.NormalDataset("cbo_ordStat_innerdataset", obj);
-            cbo_ordStat_innerdataset._setContents("<ColumnInfo><Column id=\"codecolumn\" size=\"256\"/><Column id=\"datacolumn\" size=\"256\"/></ColumnInfo><Rows><Row><Col id=\"codecolumn\">A</Col><Col id=\"datacolumn\">주문대기</Col></Row><Row><Col id=\"codecolumn\">B</Col><Col id=\"datacolumn\">주문접수</Col></Row><Row><Col id=\"codecolumn\">C</Col><Col id=\"datacolumn\">주문취소</Col></Row><Row><Col id=\"codecolumn\">D</Col><Col id=\"datacolumn\">설치완료</Col></Row><Row><Col id=\"codecolumn\">E</Col><Col id=\"datacolumn\">설치취소</Col></Row></Rows>");
-            obj.set_innerdataset(cbo_ordStat_innerdataset);
+            obj.set_innerdataset("ds_ordStatCombo");
             obj.set_text("");
             obj.set_value("");
             obj.set_index("-1");
@@ -163,9 +168,41 @@
 
         this.OB_001_onload = function(obj,e)
         {
-        	alert("onload 함수 실행");
+        	//alert("onload 함수 실행");
 
-        	//검색 조건의 주문상태 콤보박스 초기화
+        	//OB_001.xfdl이 화면에 로드될 때 검색 조건의 주문상태 콤보박스를 초기화 시켜준다.
+        	//서버에 요청을 하기 전에 서버로 전달해줘야할 인자값은 뭐가 있을지 생각해야한다.
+        	//--> 주문 상태값만을 불러오기 위해선 TB_CD_MST 테이블 WHERE 절에 CD_VL = '001' 이라는 조건을 걸어줘야 한다.
+        	//따라서 DATASET에 001이라는 값을 넣어 서버로 전달해보자.
+
+        	//ds_searchCombo 데이터셋을 생성하고 서버로 전달한 인자값을 추가해보자.
+        	this.ds_searchCombo.clearData();	// 데이터셋 초기화
+        	this.ds_searchCombo.addRow();		// 데이터셋에 값을 세팅하기 위해 1줄의 ROW를 추가
+        	this.ds_searchCombo.setColumn(0,"CD_VAL","001");	// 추가된 0번째 ROW의 CD_VAL 컬럼에 001이라는 값을 세팅한다.
+
+        	//서버로 데이터를 전송한다.
+        	//서버로 데이터를 전송하기 전 필요한 값들을 세팅한다.
+        	var strSvcId	= "selectCommonCode";					// 넥사크로에서 transaction을 구분하기 위한 id값 이 id는 차후 fnCallback 함수에서 쓰인다.
+        	var strSvcUrl	= "selectCommonCode.do";				// Java Controller에서 이 주소를 식별하여 요청을 처리한다.
+        	var inData		= "ds_search = ds_searchCombo";			// 서버로 전송할 데이터셋 세팅 = 문자 기준 왼쪽이 서버 오른쪽이 프론트 데이터셋이다.
+        															// 프론트의 ds_searchCombo를 서버의 ds_search 값을 대입하겠다는 의미이다.
+        															// 서버측(.java)에도 = 기준 왼쪽 데이터셋명(ds_search)과 반드시! 동일하게 명명해야 한다.
+
+        	var outData		= "ds_ordStatCombo = ds_commonCode";	// 서버로부터 값을 전달받을 데이터셋 세팅
+        															// 위와는 반대로 = 문자 기준 왼쪽이 프론트 오른쪽이 서버 데이터셋이다.
+        															// 서버의 ds_commonCode 서버의 ds_ordStatCombo로 값을 대입하겠다는 의미이다.
+        															// 서버측(.java)에도 = 기준 오른쪽 데이터셋명(ds_commonCode)과 반드시! 동일하게 명명해야 한다.
+        	var strArg		= "";									// 데이터셋이 아닌 값을 보낼때 쓰는 필드지만 데이터셋을 쓰는걸로 통일하자.
+        	var callBackFnc	= "fnCallback"; // 프레임웍 사이클의 9번에 해당한다. 서버로 부터 값을 받은 이후 프론트에서 이행해야할 작업 코드를
+        									// fnCallback 함수에서 작성한다.
+
+        	//넥사크로 N에서 제공하는 서버로 요청하는 공통함수를 쓴다.
+        	this.gfnTransaction( strSvcId	,
+        						 strSvcUrl	,
+        						 inData		,
+        						 outData	,
+        						 strArg		,
+        						 callBackFnc);	// 세팅한 값을 담아 서버로 데이터 전송
         };
 
         this.btn_selectOrd_onclick = function(obj,e)

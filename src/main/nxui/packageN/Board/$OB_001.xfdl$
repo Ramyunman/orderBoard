@@ -10,36 +10,7 @@
         <Static id="sta01" taborder="3" text="주문 번호" left="158" top="4" width="98" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;"/>
         <CheckBox id="chk_cmpYn" taborder="4" left="589" top="-2" width="51" height="51" onchanged="chk_cmpYn_onchanged"/>
         <Static id="sta01_00" taborder="5" text="법인 고객 여부" left="457" top="3" width="108" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;" onclick="sta01_00_onclick"/>
-        <Combo id="cbo_ordStat" taborder="6" text="" left="590" top="52" width="177" height="42" value="" index="-1" innerdataset="innerdataset" codecolumn="codecolumn" datacolumn="datacolumn" displaynulltext="선택">
-          <Dataset id="innerdataset">
-            <ColumnInfo>
-              <Column id="codecolumn" size="256"/>
-              <Column id="datacolumn" size="256"/>
-            </ColumnInfo>
-            <Rows>
-              <Row>
-                <Col id="codecolumn">A</Col>
-                <Col id="datacolumn">주문대기</Col>
-              </Row>
-              <Row>
-                <Col id="codecolumn">B</Col>
-                <Col id="datacolumn">주문접수</Col>
-              </Row>
-              <Row>
-                <Col id="codecolumn">C</Col>
-                <Col id="datacolumn">주문취소</Col>
-              </Row>
-              <Row>
-                <Col id="codecolumn">D</Col>
-                <Col id="datacolumn">설치완료</Col>
-              </Row>
-              <Row>
-                <Col id="codecolumn">E</Col>
-                <Col id="datacolumn">설치취소</Col>
-              </Row>
-            </Rows>
-          </Dataset>
-        </Combo>
+        <Combo id="cbo_ordStat" taborder="6" text="" left="590" top="52" width="177" height="42" value="" index="-1" codecolumn="CD_VAL1" datacolumn="CD_NM1" displaynulltext="선택" innerdataset="ds_ordStatCombo"/>
         <Static id="sta01_01" taborder="7" text="주문 상태" left="453" top="51" width="108" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;" onclick="sta01_01_onclick"/>
         <Radio id="rdo_custGb" taborder="8" left="902" top="2" width="193" height="50" innerdataset="innerdataset" codecolumn="codecolumn" datacolumn="datacolumn" direction="vertical">
           <Dataset id="innerdataset">
@@ -117,9 +88,41 @@
     <Script type="xscript5.1"><![CDATA[
 this.OB_001_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
 {
-	alert("onload 함수 실행");
+	//alert("onload 함수 실행");
 	
-	//검색 조건의 주문상태 콤보박스 초기화
+	//OB_001.xfdl이 화면에 로드될 때 검색 조건의 주문상태 콤보박스를 초기화 시켜준다.
+	//서버에 요청을 하기 전에 서버로 전달해줘야할 인자값은 뭐가 있을지 생각해야한다.
+	//--> 주문 상태값만을 불러오기 위해선 TB_CD_MST 테이블 WHERE 절에 CD_VL = '001' 이라는 조건을 걸어줘야 한다.
+	//따라서 DATASET에 001이라는 값을 넣어 서버로 전달해보자.
+	
+	//ds_searchCombo 데이터셋을 생성하고 서버로 전달한 인자값을 추가해보자.
+	this.ds_searchCombo.clearData();	// 데이터셋 초기화
+	this.ds_searchCombo.addRow();		// 데이터셋에 값을 세팅하기 위해 1줄의 ROW를 추가
+	this.ds_searchCombo.setColumn(0,"CD_VAL","001");	// 추가된 0번째 ROW의 CD_VAL 컬럼에 001이라는 값을 세팅한다. 
+	
+	//서버로 데이터를 전송한다.
+	//서버로 데이터를 전송하기 전 필요한 값들을 세팅한다.
+	var strSvcId	= "selectCommonCode";					// 넥사크로에서 transaction을 구분하기 위한 id값 이 id는 차후 fnCallback 함수에서 쓰인다.
+	var strSvcUrl	= "selectCommonCode.do";				// Java Controller에서 이 주소를 식별하여 요청을 처리한다.
+	var inData		= "ds_search = ds_searchCombo";			// 서버로 전송할 데이터셋 세팅 = 문자 기준 왼쪽이 서버 오른쪽이 프론트 데이터셋이다.  
+															// 프론트의 ds_searchCombo를 서버의 ds_search 값을 대입하겠다는 의미이다.
+															// 서버측(.java)에도 = 기준 왼쪽 데이터셋명(ds_search)과 반드시! 동일하게 명명해야 한다.
+	
+	var outData		= "ds_ordStatCombo = ds_commonCode";	// 서버로부터 값을 전달받을 데이터셋 세팅
+															// 위와는 반대로 = 문자 기준 왼쪽이 프론트 오른쪽이 서버 데이터셋이다.
+															// 서버의 ds_commonCode 서버의 ds_ordStatCombo로 값을 대입하겠다는 의미이다.
+															// 서버측(.java)에도 = 기준 오른쪽 데이터셋명(ds_commonCode)과 반드시! 동일하게 명명해야 한다.
+	var strArg		= "";									// 데이터셋이 아닌 값을 보낼때 쓰는 필드지만 데이터셋을 쓰는걸로 통일하자. 
+	var callBackFnc	= "fnCallback"; // 프레임웍 사이클의 9번에 해당한다. 서버로 부터 값을 받은 이후 프론트에서 이행해야할 작업 코드를												
+									// fnCallback 함수에서 작성한다.
+
+	//넥사크로 N에서 제공하는 서버로 요청하는 공통함수를 쓴다.
+	this.gfnTransaction( strSvcId	,
+						 strSvcUrl	,
+						 inData		,
+						 outData	,
+						 strArg		,
+						 callBackFnc);	// 세팅한 값을 담아 서버로 데이터 전송
 };
 
 this.btn_selectOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
@@ -152,5 +155,18 @@ this.chk_cmpYn_onchanged = function(obj:nexacro.CheckBox,e:nexacro.CheckBoxChang
 	alert("onchanged 함수 실행");
 };
 ]]></Script>
+    <Objects>
+      <Dataset id="ds_searchCombo">
+        <ColumnInfo>
+          <Column id="CD_VAL" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="ds_ordStatCombo">
+        <ColumnInfo>
+          <Column id="CD_VAL1" type="STRING" size="256"/>
+          <Column id="CD_NM1" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+    </Objects>
   </Form>
 </FDL>
