@@ -235,6 +235,20 @@
         	alert("onchanged 함수 실행");
         };
 
+        /*********************************************************************************************************
+        * CallBack Function (서버수신)
+        *********************************************************************************************************/
+        this.fnCallback = function(svcID, errorCode, errorMsg)
+        {
+        	switch(svcID)
+        	{
+        		case "selectCommonCode":
+        			this.ds_ordStatCombo.insertRow(0); //0번째 Row에 라인 삽입 추가
+        			this.ds_ordStatCombo.setColumn(0, "CD_VAL1",""); // 해당 ROW에 값 추가
+        			this.ds_ordStatCombo.setColumn(0, "CD_NM1", "전체");
+        			break;
+        	}
+        };
         });
         
         // Regist UI Components Event

@@ -5,6 +5,12 @@
 <mapper namespace="com.nexacro.orderBoard.mapper.UiadapterBoardMapper">
 	
     <!--  POJO -->
+    <select id="selectCommonCode" parameterType="java.util.Map" resultType="java.util.Map">
+    		SELECT CD_VAL1
+    			 , CD_NM1
+    		  FROM TB_CD_MST
+    		 WHERE CD_VAL = #{CD_VAL}
+    </select>
      <select id="retrieve_datalist" parameterType="com.nexacro.orderBoard.object.Board" resultType="com.nexacro.orderBoard.object.Board">
             select title 
                  , regId 

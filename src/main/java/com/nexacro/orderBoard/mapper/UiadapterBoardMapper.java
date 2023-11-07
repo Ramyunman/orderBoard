@@ -1,5 +1,6 @@
 package com.nexacro.orderBoard.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,4 +43,6 @@ public interface UiadapterBoardMapper {
 	public void delete_board_map(Map<String, Object> board);
 	
 	public int selectUserCount();
+
+	public ArrayList<Map<String, Object>> selectCommonCode(Map<String, Object> ds_combo);
 }
