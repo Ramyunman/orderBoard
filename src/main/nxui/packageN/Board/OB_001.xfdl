@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="2.1">
+  <Form id="OB_001" width="1280" height="720" titletext="주문게시판" border="1px solid black" visible="true" onload="OB_001_onload">
+    <Layouts>
+      <Layout height="720" width="1280">
+        <Static id="sta02" taborder="16" left="150" top="-1" width="1130" height="111" border="1px solid"/>
+        <Static id="sta00" taborder="0" text="검색 조건" left="0" top="0" width="150" height="110" font="bold 16px/normal &quot;Gulim&quot;" textAlign="center" background="ivory" border="1px solid black" onclick="sta00_onclick"/>
+        <Button id="btn_regOrd" taborder="1" text="주문 등록" left="12" top="124" width="108" height="35" enable="true" visible="true" onclick="btn_regOrd_onclick"/>
+        <Edit id="edt_ordNo" taborder="2" left="259" top="15" width="174" height="35" inputtype="number"/>
+        <Static id="sta01" taborder="3" text="주문 번호" left="158" top="4" width="98" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;"/>
+        <CheckBox id="chk_cmpYn" taborder="4" left="589" top="-2" width="51" height="51" onchanged="chk_cmpYn_onchanged"/>
+        <Static id="sta01_00" taborder="5" text="법인 고객 여부" left="457" top="3" width="108" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;" onclick="sta01_00_onclick"/>
+        <Combo id="cbo_ordStat" taborder="6" text="" left="590" top="52" width="177" height="42" value="" index="-1" innerdataset="innerdataset" codecolumn="codecolumn" datacolumn="datacolumn" displaynulltext="선택">
+          <Dataset id="innerdataset">
+            <ColumnInfo>
+              <Column id="codecolumn" size="256"/>
+              <Column id="datacolumn" size="256"/>
+            </ColumnInfo>
+            <Rows>
+              <Row>
+                <Col id="codecolumn">A</Col>
+                <Col id="datacolumn">주문대기</Col>
+              </Row>
+              <Row>
+                <Col id="codecolumn">B</Col>
+                <Col id="datacolumn">주문접수</Col>
+              </Row>
+              <Row>
+                <Col id="codecolumn">C</Col>
+                <Col id="datacolumn">주문취소</Col>
+              </Row>
+              <Row>
+                <Col id="codecolumn">D</Col>
+                <Col id="datacolumn">설치완료</Col>
+              </Row>
+              <Row>
+                <Col id="codecolumn">E</Col>
+                <Col id="datacolumn">설치취소</Col>
+              </Row>
+            </Rows>
+          </Dataset>
+        </Combo>
+        <Static id="sta01_01" taborder="7" text="주문 상태" left="453" top="51" width="108" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;" onclick="sta01_01_onclick"/>
+        <Radio id="rdo_custGb" taborder="8" left="902" top="2" width="193" height="50" innerdataset="innerdataset" codecolumn="codecolumn" datacolumn="datacolumn" direction="vertical">
+          <Dataset id="innerdataset">
+            <ColumnInfo>
+              <Column id="codecolumn" size="256"/>
+              <Column id="datacolumn" size="256"/>
+            </ColumnInfo>
+            <Rows>
+              <Row>
+                <Col id="codecolumn">P</Col>
+                <Col id="datacolumn">개인</Col>
+              </Row>
+              <Row>
+                <Col id="codecolumn">C</Col>
+                <Col id="datacolumn">법인</Col>
+              </Row>
+              <Row>
+                <Col id="codecolumn">R</Col>
+                <Col id="datacolumn">임직원</Col>
+              </Row>
+            </Rows>
+          </Dataset>
+        </Radio>
+        <Static id="sta01_02" taborder="9" text="고객 구분" left="779" top="6" width="108" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;"/>
+        <Grid id="grd_ordList" taborder="10" left="12" top="173" width="918" height="537" oncellclick="grd_ordList_oncellclick">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="135"/>
+                <Column size="72"/>
+                <Column size="60"/>
+                <Column size="69"/>
+                <Column size="60"/>
+                <Column size="99"/>
+                <Column size="196"/>
+                <Column size="70"/>
+                <Column size="156"/>
+              </Columns>
+              <Rows>
+                <Row size="44" band="head"/>
+                <Row size="24"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="주문번호"/>
+                <Cell col="1" text="주문상태"/>
+                <Cell col="2" text="고객번호"/>
+                <Cell col="3" text="고객명"/>
+                <Cell col="4" text="고객구분"/>
+                <Cell col="5" text="전화번호"/>
+                <Cell col="6" text="주소"/>
+                <Cell col="7" text="상품명"/>
+                <Cell col="8" text="주문일시"/>
+              </Band>
+              <Band id="body">
+                <Cell/>
+                <Cell col="1"/>
+                <Cell col="2"/>
+                <Cell col="3"/>
+                <Cell col="4"/>
+                <Cell col="5"/>
+                <Cell col="6"/>
+                <Cell col="7"/>
+                <Cell col="8"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+        <Button id="btn_updOrd" taborder="11" text="주문 수정" left="137" top="124" width="108" height="35" enable="true" visible="true" onclick="btn_updOrd_onclick"/>
+        <Button id="btn_delOrd" taborder="12" text="주문 삭제" left="262" top="124" width="108" height="35" enable="true" visible="true" onclick="btn_delOrd_onclick"/>
+        <Static id="sta01_03" taborder="13" text="고객명" left="152" top="54" width="108" height="41" textAlign="center" font="bold 14px/normal &quot;Gulim&quot;"/>
+        <Edit id="edt_custNm" taborder="14" left="259" top="59" width="174" height="35" inputtype="normal"/>
+        <Button id="btn_selectOrd" taborder="15" text="조 회" left="1110" top="8" width="111" height="93" background="blue" font="14px/normal &quot;Gulim&quot;" color="aliceblue" onclick="btn_selectOrd_onclick"/>
+      </Layout>
+    </Layouts>
+    <Script type="xscript5.1"><![CDATA[
+this.OB_001_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
+{
+	alert("onload 함수 실행");
+	
+	//검색 조건의 주문상태 콤보박스 초기화
+};
+
+this.btn_selectOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	alert("주문리스트 조회");
+};
+
+this.btn_regOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	alert("주문 등록 실행");
+};
+
+this.btn_updOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	alert("주문 수정 실행");
+};
+
+this.btn_delOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	alert("주문 삭제 실행");
+};
+
+this.grd_ordList_oncellclick = function(obj:nexacro.Grid,e:nexacro.GridClickEventInfo)
+{
+	// 그리드 더블 클릭 시 실행
+};
+
+this.chk_cmpYn_onchanged = function(obj:nexacro.CheckBox,e:nexacro.CheckBoxChangedEventInfo)
+{
+	alert("onchanged 함수 실행");
+};
+]]></Script>
+  </Form>
+</FDL>
