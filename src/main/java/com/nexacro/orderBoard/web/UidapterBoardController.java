@@ -51,6 +51,15 @@ public class UidapterBoardController {
 	@Autowired(required = true)
 	private UidapterBoardService uidapterSampleService;
 	
+	@RequestMapping(value = "/orderBoard/insertOrdList.do")
+	public NexacroResult insertOrdList(@ParamDataSet(name = "ds_regOrd") Map<String,Object> ds_regOrd) throws NexacroException {
+		
+		NexacroResult result = new NexacroResult();	// return 값을 세팅하기 위한 객체 생성
+		uidapterSampleService.insertOrdList(ds_regOrd);	// 요청 처리를 Service로 이관
+															
+		return result;	// 회신
+	}
+
 	@RequestMapping(value = "/orderBoard/selectItemList.do")
 	public NexacroResult selectItemList() throws NexacroException {
 		

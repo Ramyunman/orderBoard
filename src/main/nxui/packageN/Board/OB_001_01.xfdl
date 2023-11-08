@@ -37,12 +37,48 @@ this.OB_001_01_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
 
 this.btn_regOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
 {
-	alert("주문 등록 버튼 실행");
+	//alert("주문 등록 버튼 실행");
+	// 1. 주문등록을 위해 입력받은 6개의 값을 데이터셋에 담아 서버로 전송해야 한다.
+	// 따라서, 데이터셋을 만들고 사용자가 입력한 6개의 값을 세팅한다.
+	this.ds_regOrd.clearData();
+	this.ds_regOrd.addRow();
+	this.ds_regOrd.setColumn(0,"CUST_NM",this.edt_custNm.value);
+	this.ds_regOrd.setColumn(0,"PHONE",this.edt_phone.value);
+	this.ds_regOrd.setColumn(0,"BIR_BIZ_NO",this.edt_birBizNo.value);
+	this.ds_regOrd.setColumn(0,"ADDR",this.edt_addr.value);
+	this.ds_regOrd.setColumn(0,"CUST_GBCD",this.cbo_custGbNm.value); //combo에서 .value를 쓸 경우 CODE를 
+	this.ds_regOrd.setColumn(0,"ITEM_CD",this.cbo_itemNm.value);	 //combo에서 .name을 쓸 경우 DATA를 가져온다.
+	
+	trace(this.ds_regOrd.getColumn(0,"CUST_NM"));
+	trace(this.ds_regOrd.getColumn(0,"PHONE"));
+	trace(this.ds_regOrd.getColumn(0,"BIR_BIZ_NO"));
+	trace(this.ds_regOrd.getColumn(0,"ADDR"));
+	trace(this.ds_regOrd.getColumn(0,"CUST_GBCD"));
+	trace(this.ds_regOrd.getColumn(0,"ITEM_CD"));
+	
+	return 0;
+	//2. 세팅한 값을 서버로 전송한다.
+	var strSvcId	= "insertOrdList";
+	var strSvcUrl	= "insertOrdList.do";
+	var inData		= "ds_regOrd = ds_regOrd";
+	var outData		= ""; // 서버로부터 받을 값은 따로 없으니 생략하자.
+	var strArg		= "";
+	var callBackFnc	= "fnCallback";
+	
+	// 넥사크로 N에서 제공하는 서버로 요청하는 공통함수를 쓴다.
+	this.gfnTransaction( strSvcId	,
+						 strSvcUrl	,
+						 inData	 ,
+						 outData ,
+						 strArg	 ,
+						 callBackFnc);	
+	
 };
 
 this.btn_exit_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
 {
-	alert("닫기 버튼 실행");
+	//alert("닫기 버튼 클릭");
+	this.close();
 };
 
 /*****************************************************************************************************
@@ -129,6 +165,16 @@ this.fnCallback = function(svcID, errorCode, errorMsg)
         <ColumnInfo>
           <Column id="CD_VAL1" type="STRING" size="256"/>
           <Column id="CD_NM1" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="ds_regOrd">
+        <ColumnInfo>
+          <Column id="CUST_NM" type="STRING" size="256"/>
+          <Column id="PHONE" type="STRING" size="256"/>
+          <Column id="BIR_BIZ_NO" type="STRING" size="256"/>
+          <Column id="ADDR" type="STRING" size="256"/>
+          <Column id="CUST_GBCD" type="STRING" size="256"/>
+          <Column id="ITEM_CD" type="STRING" size="256"/>
         </ColumnInfo>
       </Dataset>
     </Objects>

@@ -49,4 +49,10 @@ public interface UiadapterBoardMapper {
 	public ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList);
 
 	public ArrayList<Map<String, Object>> selectItemList();
+
+	public String checkCustDup(Map<String, Object> checkCustDup);	//기 고객번호가 있는지 체크하기 위한 메소드
+
+	public void insertCust(Map<String, Object> ds_regOrd);	// 신규 고객 INSERT
+	
+	public void insertOrd(Map<String, Object> ds_regOrd);	// 신규 주문 INSERT
 }

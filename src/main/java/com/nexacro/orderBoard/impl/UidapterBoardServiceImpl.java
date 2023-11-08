@@ -114,4 +114,27 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
 		return mapper.selectItemList();
 	}
+
+	@Override
+	public void insertOrdList(Map<String, Object> ds_regOrd) {
+		
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		// 1. 작업하기에 앞서 해당 고객이 이미 기존에 TB_CUST에 있는 경우
+		// 	  중복으로 INSERT하는 경우가 생기면 안된다.
+		//	  따라서 고객명, 휴대폰 번호, 사업자, 주소가 완전히 일치하는 고객코드가 있을 경우
+		//	  insert하지 않고 고객이 없을 경우만 insert하도록 비즈니스 로직을 짜보자.
+		
+		String custCode = mapper.checkCustDup(ds_regOrd);
+		ds_regOrd.put("CUST_CD", custCode);
+		if("".equals(custCode) || custCode == null) {
+			//고객등록
+			mapper.insertCust(ds_regOrd);
+			custCode = mapper.checkCustDup(ds_regOrd);	// 다시금 고객번호를 조회해 데이터셋에 넣어줘야 함.
+			ds_regOrd.put("CUST_CODE", custCode);
+		} else {
+			// 이미 TB_CUST에 등록된 고객이므로 insert 필요 없음
+		}
+		//주문등록
+		mapper.insertOrd(ds_regOrd);
+	}
 }
