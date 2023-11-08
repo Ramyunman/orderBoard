@@ -265,6 +265,10 @@
         *********************************************************************************************/
         this.fnCallback = function(svcID, errorCode, errorMsg)
         {
+        	if(errorCode < 0) {
+        		alert("작업 실패 에러 코드 : " + errorCode);
+        		return 0;
+        	}
         	switch(svcID)
         	{
         		case "selectCommonCode":
@@ -272,6 +276,10 @@
         			break;
         		case "selectItemList":
         			trace("주문상품 콤보박스 세팅 완료");
+        			break;
+        		case "insertOrdList":
+        			alert("주문 등록 완료");
+        			this.close(); //팝업닫기
         			break;
         	}
         };
