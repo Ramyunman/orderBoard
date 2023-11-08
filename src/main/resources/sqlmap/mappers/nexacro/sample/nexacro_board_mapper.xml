@@ -5,11 +5,63 @@
 <mapper namespace="com.nexacro.orderBoard.mapper.UiadapterBoardMapper">
 	
     <!--  POJO -->
+    
+    <select id="checkCustDup" parameterType="java.util.Map" resultType="String">
+    		SELECT CUST_CD
+    		  FROM TB_CUST
+    		 WHERE CUST_GBCD = #{CUST_GBCD}
+    		   AND CUST_NM = #{CUST_NM}
+    		   AND PHONE = #{PHONE}
+    		   AND BIRTHBISNO = #{BIR_BIZ_NO}
+    		   AND ADDR = #{ADDR}
+    </select>
+    
+    <insert id="insertOrd" parameterType="java.util.Map" >
+    		INSERT INTO TB_ORD(
+    			ORD_NO
+    			, ITEM_CD
+    			, CUST_CD
+    			, ORD_STAT_CD
+    			, REG_DT
+    			, UPD_DT
+    		) VALUES (
+    			TO_CHAR(SYSDATE, 'YYYYMMDD') || LPAD(ORDER_SEQ.NEXTVAL,4,'0')
+    			, #{ITEM_CD}
+    			, #{CUST_CD}
+    			, 'A'		/*최초 주문등록 시에는 주문대기 상태로 지정*/
+    			, SYSDATE
+    			, SYSDATE
+    		)
+    </insert>
+    
+    <insert id="insertCust" parameterType="java.util.Map">
+    		INSERT INTO TB_CUST(
+    			CUST_CD
+    			, CUST_GBCD
+    			, CUST_NM
+    			, PHONE
+    			, BIRTHBISNO
+    			, ADDR
+    			, REG_DT
+    			, UPD_DT	
+    		) VALUES (
+    			CUST_SEQ.NEXTVAL
+    			, #{CUST_GBCD}
+    			, #{CUST_NM}
+    			, #{PHONE}
+    			, #{BIR_BIZ_NO}
+    			, #{ADDR}
+    			, SYSDATE
+    			, SYSDATE
+    		)
+    </insert>
+    
     <select id="selectItemList" resultType="java.util.Map">
     		SELECT ITEM_CD	AS CD_VAL1 /*반드시 컬럼명을 프론트에서 받을 데이터셋(ds_itemCombo)의 컬럼명과 일치 시켜야 바인딩이됨*/
     			 , ITEM_NM	AS CD_NM1  /**/
     		  FROM TB_ITEM
     </select>
+    
     <select id="selectOrdList" parameterType="java.util.Map" resultType="java.util.Map">
     		SELECT ORD.ORD_NO							AS ORD_NO
 	 			, FN_CODE_NM('001', ORD.ORD_STAT_CD)	AS ORD_STAT_NM
@@ -47,6 +99,7 @@
     		  FROM TB_CD_MST
     		 WHERE CD_VAL = #{CD_VAL}
     </select>
+    
      <select id="retrieve_datalist" parameterType="com.nexacro.orderBoard.object.Board" resultType="com.nexacro.orderBoard.object.Board">
             select title 
                  , regId 

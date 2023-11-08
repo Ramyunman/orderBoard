@@ -130,7 +130,7 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 			//고객등록
 			mapper.insertCust(ds_regOrd);
 			custCode = mapper.checkCustDup(ds_regOrd);	// 다시금 고객번호를 조회해 데이터셋에 넣어줘야 함.
-			ds_regOrd.put("CUST_CODE", custCode);
+			ds_regOrd.put("CUST_CD", custCode);
 		} else {
 			// 이미 TB_CUST에 등록된 고객이므로 insert 필요 없음
 		}
