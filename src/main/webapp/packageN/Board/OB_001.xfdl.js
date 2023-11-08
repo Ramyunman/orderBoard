@@ -27,6 +27,16 @@
             obj = new Dataset("ds_ordStatCombo", this);
             obj._setContents("<ColumnInfo><Column id=\"CD_VAL1\" type=\"STRING\" size=\"256\"/><Column id=\"CD_NM1\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
             this.addChild(obj.name, obj);
+
+
+            obj = new Dataset("ds_searchList", this);
+            obj._setContents("<ColumnInfo><Column id=\"ORD_NO\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_NM\" type=\"STRING\" size=\"256\"/><Column id=\"COMP_YN\" type=\"STRING\" size=\"256\"/><Column id=\"ORD_STAT_CD\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_GBCD\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
+
+
+            obj = new Dataset("ds_list", this);
+            obj._setContents("<ColumnInfo><Column id=\"ORD_NO\" type=\"STRING\" size=\"256\"/><Column id=\"ORD_STAT_NM\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_NO\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_NM\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_GBCD_NM\" type=\"STRING\" size=\"256\"/><Column id=\"PHONE\" type=\"STRING\" size=\"256\"/><Column id=\"ADDR\" type=\"STRING\" size=\"256\"/><Column id=\"ITEM_NM\" type=\"STRING\" size=\"256\"/><Column id=\"REG_DT\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
             
             // UI Components Initialize
             obj = new Static("sta02","150","-1","1130","111",null,null,null,null,null,null,this);
@@ -110,7 +120,8 @@
 
             obj = new Grid("grd_ordList","12","173","918","537",null,null,null,null,null,null,this);
             obj.set_taborder("10");
-            obj._setContents("<Formats><Format id=\"default\"><Columns><Column size=\"135\"/><Column size=\"72\"/><Column size=\"60\"/><Column size=\"69\"/><Column size=\"60\"/><Column size=\"99\"/><Column size=\"196\"/><Column size=\"70\"/><Column size=\"156\"/></Columns><Rows><Row size=\"44\" band=\"head\"/><Row size=\"24\"/></Rows><Band id=\"head\"><Cell text=\"주문번호\"/><Cell col=\"1\" text=\"주문상태\"/><Cell col=\"2\" text=\"고객번호\"/><Cell col=\"3\" text=\"고객명\"/><Cell col=\"4\" text=\"고객구분\"/><Cell col=\"5\" text=\"전화번호\"/><Cell col=\"6\" text=\"주소\"/><Cell col=\"7\" text=\"상품명\"/><Cell col=\"8\" text=\"주문일시\"/></Band><Band id=\"body\"><Cell/><Cell col=\"1\"/><Cell col=\"2\"/><Cell col=\"3\"/><Cell col=\"4\"/><Cell col=\"5\"/><Cell col=\"6\"/><Cell col=\"7\"/><Cell col=\"8\"/></Band></Format></Formats>");
+            obj.set_binddataset("ds_list");
+            obj._setContents("<Formats><Format id=\"default\"><Columns><Column size=\"132\"/><Column size=\"69\"/><Column size=\"71\"/><Column size=\"78\"/><Column size=\"68\"/><Column size=\"113\"/><Column size=\"159\"/><Column size=\"91\"/><Column size=\"137\"/></Columns><Rows><Row size=\"39\" band=\"head\"/><Row size=\"30\"/></Rows><Band id=\"head\"><Cell text=\"주문번호\"/><Cell col=\"1\" text=\"주문상태\"/><Cell col=\"2\" text=\"고객번호\"/><Cell col=\"3\" text=\"고객명\"/><Cell col=\"4\" text=\"고객구분\"/><Cell col=\"5\" text=\"전화번호\"/><Cell col=\"6\" text=\"주소\"/><Cell col=\"7\" text=\"상품명\"/><Cell col=\"8\" text=\"주문일시\"/></Band><Band id=\"body\"><Cell text=\"bind:ORD_NO\" textAlign=\"center\"/><Cell col=\"1\" text=\"bind:ORD_STAT_NM\" textAlign=\"center\"/><Cell col=\"2\" text=\"bind:CUST_NO\" textAlign=\"center\"/><Cell col=\"3\" text=\"bind:CUST_NM\" textAlign=\"center\"/><Cell col=\"4\" text=\"bind:CUST_GBCD_NM\" textAlign=\"center\"/><Cell col=\"5\" text=\"bind:PHONE\" textAlign=\"center\"/><Cell col=\"6\" text=\"bind:ADDR\" textAlign=\"center\"/><Cell col=\"7\" text=\"bind:ITEM_NM\" textAlign=\"center\"/><Cell col=\"8\" text=\"bind:REG_DT\" textAlign=\"center\" calendardateformat=\"yyyy-MM-dd HH:mm:ss\"/></Band></Format></Formats>");
             this.addChild(obj.name, obj);
 
             obj = new Button("btn_updOrd","137","124","108","35",null,null,null,null,null,null,this);
@@ -184,7 +195,7 @@
         	//서버로 데이터를 전송하기 전 필요한 값들을 세팅한다.
         	var strSvcId	= "selectCommonCode";					// 넥사크로에서 transaction을 구분하기 위한 id값 이 id는 차후 fnCallback 함수에서 쓰인다.
         	var strSvcUrl	= "selectCommonCode.do";				// Java Controller에서 이 주소를 식별하여 요청을 처리한다.
-        	var inData		= "ds_search = ds_searchCombo";			// 서버로 전송할 데이터셋 세팅 = 문자 기준 왼쪽이 서버 오른쪽이 프론트 데이터셋이다.
+        	var inData		= "ds_search = ds_searchCombo";			// 서버로 전송할 데이터셋 세팅 = 문자 기준 왼쪽이 서버, 오른쪽이 프론트 데이터셋이다.
         															// 프론트의 ds_searchCombo를 서버의 ds_search 값을 대입하겠다는 의미이다.
         															// 서버측(.java)에도 = 기준 왼쪽 데이터셋명(ds_search)과 반드시! 동일하게 명명해야 한다.
 
@@ -207,12 +218,57 @@
 
         this.btn_selectOrd_onclick = function(obj,e)
         {
-        	alert("주문리스트 조회");
+        	// alert("주문리스트 조회");
+        	// 1. 조회 버튼을 클릭했을 때 우리는 DB에서 데이터를 조회하여 값을 그리드에 뿌려줘야 한다.
+        	// 그렇다면 프론트에서 우리는 어떤 값들을 만들어 서버로 보내줘야 할까?
+        	// 바로 검색조건에 있는 값들을 담아 보내줘야한다.
+        	// 이 값들을 주문 리스트 조회 시 where 절에 넣어줘야 알맞은 데이터를 가져올 수 있기 때문이다.
+        	// 따라서, 검색 조건들을 ds_searchList라는 데이터셋을 만들어 값을 세팅해주는 작업을 해보자.
+        	this.ds_searchList.clearData();
+        	this.ds_searchList.addRow();
+        	this.ds_searchList.setColumn(0,"ORD_NO",this.edt_ordNo.value);
+        	this.ds_searchList.setColumn(0,"CUST_NM",this.edt_custNm.value);
+        	this.ds_searchList.setColumn(0,"COMP_YN",this.chk_cmpYn.value);
+        	this.ds_searchList.setColumn(0,"ORD_STAT_CD",this.cbo_ordStat.value);
+        	this.ds_searchList.setColumn(0,"CUST_GBCD",this.rdo_custGb.value);
+
+        	trace("로그 남기기(크롬의 console.log기능과 같음)");
+        	trace("ORD_NO		: " + this.ds_searchList.getColumn(0,"ORD_NO"));
+        	trace("CUST_NM		: " + this.ds_searchList.getColumn(0,"CUST_NM"));
+        	trace("COMP_YN		: " + this.ds_searchList.getColumn(0,"COMP_YN"));
+        	trace("ORD_STAT_CD	: " + this.ds_searchList.getColumn(0,"ORD_STAT_CD"));
+        	trace("CUST_GBCD	: " + this.ds_searchList.getColumn(0,"CUST_GBCD"));
+
+        	// 2. 추가로, 우리는 서버에서 가져온 주문 리스트를 그리드에 보여줘야 한다.
+        	// 앞서 우리는 임의로 그리드에 뼈대만 만들어뒀다. ds_list라는 데이터셋을 만들어 바인딩함으로써
+        	// 그리드가 서버로 부터 가져오는 ds_list값을 유기적으로 보여주도록 만들어줄 것이다.
+
+        	// 3. 이제 onload 함수에서 했던것과 동일하게 this.gfnTransaction함수를 써서 서버로 데이터를 전송하고 받아보자.
+        	// 서버로 selectOrdList.do라는 URL 요청에 ds_searchList값을 담아 전송하여 ds_list라는 결과값을 회신받는 요청을 만든다.
+        	var strSvcId	= "selectOrdList";
+        	var strSvcUrl	= "selectOrdList.do";
+        	var inData		= "ds_searchList = ds_searchList";		// 프론트 데이터셋과 서버측 데이터셋 명을 동일하게 지정할 수도 있다.
+        	var outData		= "ds_list = ds_list";
+        	var strArg		= "";
+        	var callBackFnc	= "fnCallback";
+
+        	this.gfnTransaction( strSvcId	,
+        						 strSvcUrl	,
+        						 inData	 ,
+        						 outData ,
+        						 strArg	 ,
+        						 callBackFnc);
         };
 
         this.btn_regOrd_onclick = function(obj,e)
         {
-        	alert("주문 등록 실행");
+        	//alert("주문 등록 팝업 오픈");
+        	var oArg = {}; // 팝업을 열 때 부모창에서 가져갈 데이터가 있다면 데이터 세팅
+        				   // 주문 등록시에는 가져갈 데이터가 없으므로 공란으로 지정
+        				   // ex) paramTitle:"가나다라", paramCode:"abcd", paramNum:12345
+        	var oOption = {};		//top, left를 지정하지 않으면 가운데 정렬 // "top=20, left=370"
+        	var sPopupCallBack = "fnPopupCallback";	// 팝업창을 닫았을 때 후처리 로직 작성하기 위한 callBack 함수 지정
+        	this.gfnOpenPopup( "popup","Board::OB_001_01.xfdl",oArg,sPopupCallBack,oOption); //팝업으로 띄울 화면 지정 후 팝업 open
         };
 
         this.btn_updOrd_onclick = function(obj,e)

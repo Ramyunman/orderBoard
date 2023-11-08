@@ -51,6 +51,31 @@ public class UidapterBoardController {
 	@Autowired(required = true)
 	private UidapterBoardService uidapterSampleService;
 	
+	@RequestMapping(value = "/orderBoard/selectItemList.do")
+	public NexacroResult selectItemList() throws NexacroException {
+		
+		NexacroResult result = new NexacroResult();	// return 값을 세팅하기 위한 객체 생성
+		ArrayList<Map<String,Object>> ds_itemCombo = new ArrayList<Map<String,Object>>();	// return 값 ds_itemCombo 객체 생성
+				
+		ds_itemCombo = uidapterSampleService.selectItemList();	// 요청 처리를 Service로 이관
+																// Service로 부터 받아온 결과 값을 ds_itemCombo에 삽입
+		result.addDataSet("ds_itemCombo", ds_itemCombo);		// return 값 세팅
+		return result;	// 회신
+	}
+	
+	@RequestMapping(value = "/orderBoard/selectOrdList.do")
+	public NexacroResult selectOrdList(@ParamDataSet(name = "ds_searchList") Map<String,Object> ds_searchList) throws NexacroException {
+		
+		NexacroResult result = new NexacroResult();	// return 값을 세팅하기 위한 객체 생성
+		ArrayList<Map<String,Object>> ds_list = new ArrayList<Map<String,Object>>();	// return 값 ds_ordStatCombo 객체 생성
+				
+		ds_list = uidapterSampleService.selectOrdList(ds_searchList);	// 요청 처리를 Service로 이관
+																			// Service로 부터 받아온 결과 값을 ds_commonCode에 삽입
+		result.addDataSet("ds_list", ds_list);	// return 값 세팅
+		return result;	// 회신
+	}
+	
+	
 	@RequestMapping(value = "/orderBoard/selectCommonCode.do")
 	public NexacroResult selectCommonCode(@ParamDataSet(name = "ds_search") Map<String,Object> ds_search) throws NexacroException {
 		

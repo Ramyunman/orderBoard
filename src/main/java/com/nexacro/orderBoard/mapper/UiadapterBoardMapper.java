@@ -45,4 +45,8 @@ public interface UiadapterBoardMapper {
 	public int selectUserCount();
 
 	public ArrayList<Map<String, Object>> selectCommonCode(Map<String, Object> ds_combo);
+
+	public ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList);
+
+	public ArrayList<Map<String, Object>> selectItemList();
 }

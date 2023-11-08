@@ -17,7 +17,19 @@
             }
             
             // Object(Dataset, ExcelExportObject) Initialize
+            obj = new Dataset("ds_searchCustGb", this);
+            obj._setContents("<ColumnInfo><Column id=\"CD_VAL\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
 
+
+            obj = new Dataset("ds_custGbCombo", this);
+            obj._setContents("<ColumnInfo><Column id=\"CD_VAL1\" type=\"STRING\" size=\"256\"/><Column id=\"CD_NM1\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
+
+
+            obj = new Dataset("ds_itemCombo", this);
+            obj._setContents("<ColumnInfo><Column id=\"CD_VAL1\" type=\"STRING\" size=\"256\"/><Column id=\"CD_NM1\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
             
             // UI Components Initialize
             obj = new Static("sta00","0","25","141","34",null,null,null,null,null,null,this);
@@ -81,14 +93,20 @@
             obj = new Combo("cbo_custGbNm","158","203","162","36",null,null,null,null,null,null,this);
             obj.set_taborder("10");
             obj.set_displaynulltext("선택");
+            obj.set_innerdataset("ds_custGbCombo");
+            obj.set_datacolumn("CD_NM1");
+            obj.set_codecolumn("CD_VAL1");
             obj.set_text("선택");
             obj.set_value("");
             obj.set_index("-1");
             this.addChild(obj.name, obj);
 
-            obj = new Combo("cbo_custGbNm00","158","246","162","36",null,null,null,null,null,null,this);
+            obj = new Combo("cbo_itemNm","158","246","162","36",null,null,null,null,null,null,this);
             obj.set_taborder("11");
             obj.set_displaynulltext("선택");
+            obj.set_innerdataset("ds_itemCombo");
+            obj.set_datacolumn("CD_NM1");
+            obj.set_codecolumn("CD_VAL1");
             obj.set_text("선택");
             obj.set_value("");
             obj.set_index("-1");
@@ -125,9 +143,17 @@
 
         this.OB_001_01_onload = function(obj,e)
         {
-        	alert("onload함수 실행");
+        	//alert("onload함수 실행");
+        	// 주문 등록을 위해 고객구분, 주문상품 콤보박스 안의 데이터를 TB_CD_MST 테이블과 TB_ITEM 테이블에서 조회하여 값을 채워주자.
+        	// 1. 고객구분 콤보박스에 출력할 데이터들을 TB_CDMST 테이블로부터 값을 조회해 오자.
+        	// 이 로직은 앞서 OB_001.xfdl onload에서 만든 경험이 있다. 이미 만들어둔 서버 로직 그대로 쓰면 된다.
+        	// 우리는 단지 프론트 코디을 통해 TB_CD_MST 테이블 SELECT 시 WHERE절에 필요한 값을 서버로 넘겨주면된다.
+        	// 코딩을 하며 이해해보자.
+        	this.fn_setCustGbCbo();
 
-        	// 주문 등록을 위한 주문상태, 주문상품 콤보박스 초기화
+        	// 2. 주문상품 리스트를 TB_ITEM 테이블로부터 조회하여 콤보박스 안의 데이터를 채워주자.
+        	// 방법은 위 TB_CD_MST 테이블을 조회해 오는 방식과 유사하다.
+        	this.fn_setItemCbo();
         };
 
         this.btn_regOrd_onclick = function(obj,e)
@@ -140,6 +166,74 @@
         	alert("닫기 버튼 실행");
         };
 
+        /*****************************************************************************************************
+        * 사용자 정의 함수
+        *****************************************************************************************************/
+        this.fn_setCustGbCbo = function(obj,e)
+        {
+        	// trace("고객구분 콤보박스 세팅");
+        	// ds_searchCustGb 데이터셋을 생성하고 서버로 전달한 인자값을 추가해보자.
+        	this.ds_searchCustGb.clearData();
+        	this.ds_searchCustGb.addRow();
+        	this.ds_searchCustGb.setColumn(0,"CD_VAL","002"); // 고객구분은 코드가 002이다.
+
+        	// 서버로 데이터를 요청하는 부분이다.
+        	// 아래 부분은 OB_001.xfdl의 onload부분을 그대로 복사해서 가져온다.
+        	var strSvcId	= "selectCommonCode";
+        	var strSvcUrl	= "selectCommonCode.do";
+        	var inData		= "ds_search = ds_searchCustGb";	// ds_searchCombo -> ds_searchCustGb 명칭변경
+        	var outData		= "ds_custGbCombo = ds_commonCode";	// ds_ordStatCombo -> ds_custGbCombo 명칭변경
+        	var strArg		= "";
+        	var callBackFnc	= "fnCallback";
+
+        	// 넥사크로 N에서 제공하는 서버로 요청하는 공통함수를 쓴다.
+        	this.gfnTransaction( strSvcId	,
+        						 strSvcUrl	,
+        						 inData	 ,
+        						 outData ,
+        						 strArg	 ,
+        						 callBackFnc);	// 세팅한 값을 담아 서버로 데이터 전송
+        };
+
+        this.fn_setItemCbo = function(obj,e)
+        {
+        	// trace("주문상품 콤보박스 세팅");
+        	// 주문 상품의 경우 프론트에서 별도로 전송해줘야할 값이 없다.
+        	// 서버에서 보내준 값만 받아서 주문상품 콤보박스에 바인딩만 해주면 된다.
+
+        	var strSvcId	= "selectItemList";
+        	var strSvcUrl	= "selectItemList.do";
+        	var inData		= "";	// 따로 전송할 데이터가 없음
+        	var outData		= "ds_itemCombo = ds_itemCombo";
+        	var strArg		= "";
+        	var callBackFnc	= "fnCallback";
+
+        	// 넥사크로 N에서 제공하는 서버로 요청하는 공통함수를 쓴다.
+        	this.gfnTransaction( strSvcId	,
+        						 strSvcUrl	,
+        						 inData	 ,
+        						 outData ,
+        						 strArg	 ,
+        						 callBackFnc);	// 세팅한 값을 담아 서버로 데이터 전송
+
+
+        };
+
+        /*********************************************************************************************
+        * CallBack Function (서버 수신)
+        *********************************************************************************************/
+        this.fnCallback = function(svcID, errorCode, errorMsg)
+        {
+        	switch(svcID)
+        	{
+        		case "selectCommonCode":
+        			trace("고객구분 콤보박스 세팅 완료");
+        			break;
+        		case "selectItemList":
+        			trace("주문상품 콤보박스 세팅 완료");
+        			break;
+        	}
+        };
         });
         
         // Regist UI Components Event

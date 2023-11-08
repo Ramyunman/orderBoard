@@ -102,4 +102,16 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
 		return mapper.selectCommonCode(ds_search);
 	}
+
+	@Override
+	public ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList) {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		return mapper.selectOrdList(ds_searchList);
+	}
+
+	@Override
+	public ArrayList<Map<String, Object>> selectItemList() {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		return mapper.selectItemList();
+	}
 }

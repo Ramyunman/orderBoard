@@ -35,4 +35,8 @@ public interface UidapterBoardService {
 	int selectUserCount();
 
 	ArrayList<Map<String, Object>> selectCommonCode(Map<String, Object> ds_search);
+
+	ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList);
+
+	ArrayList<Map<String, Object>> selectItemList();
 }
