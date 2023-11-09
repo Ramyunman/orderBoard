@@ -41,4 +41,8 @@ public interface UidapterBoardService {
 	ArrayList<Map<String, Object>> selectItemList();
 
 	void insertOrdList(Map<String, Object> ds_regOrd);
+
+	void updateOrdList(Map<String, Object> ds_updOrd);
+
+	void deleteOrdList(Map<String, Object> ds_delList);
 }

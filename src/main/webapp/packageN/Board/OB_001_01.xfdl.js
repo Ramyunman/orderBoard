@@ -182,7 +182,6 @@
         	trace(this.ds_regOrd.getColumn(0,"CUST_GBCD"));
         	trace(this.ds_regOrd.getColumn(0,"ITEM_CD"));
 
-        	return 0;
         	//2. 세팅한 값을 서버로 전송한다.
         	var strSvcId	= "insertOrdList";
         	var strSvcUrl	= "insertOrdList.do";

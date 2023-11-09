@@ -137,4 +137,22 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 		//주문등록
 		mapper.insertOrd(ds_regOrd);
 	}
+
+	@Override
+	public void updateOrdList(Map<String, Object> ds_updOrd) {
+		
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		// 주문 수정
+		mapper.updateOrd(ds_updOrd);
+		
+	}
+
+	@Override
+	public void deleteOrdList(Map<String, Object> ds_delList) {
+		
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		// 주문 삭제
+		mapper.deleteOrd(ds_delList);
+		
+	}
 }

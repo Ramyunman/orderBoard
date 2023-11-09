@@ -37,6 +37,11 @@
             obj = new Dataset("ds_list", this);
             obj._setContents("<ColumnInfo><Column id=\"ORD_NO\" type=\"STRING\" size=\"256\"/><Column id=\"ORD_STAT_NM\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_NO\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_NM\" type=\"STRING\" size=\"256\"/><Column id=\"CUST_GBCD_NM\" type=\"STRING\" size=\"256\"/><Column id=\"PHONE\" type=\"STRING\" size=\"256\"/><Column id=\"ADDR\" type=\"STRING\" size=\"256\"/><Column id=\"ITEM_NM\" type=\"STRING\" size=\"256\"/><Column id=\"REG_DT\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
             this.addChild(obj.name, obj);
+
+
+            obj = new Dataset("ds_delList", this);
+            obj._setContents("<ColumnInfo><Column id=\"ORD_NO\" type=\"STRING\" size=\"256\"/></ColumnInfo>");
+            this.addChild(obj.name, obj);
             
             // UI Components Initialize
             obj = new Static("sta02","150","-1","1130","111",null,null,null,null,null,null,this);
@@ -196,12 +201,12 @@
         	var strSvcId	= "selectCommonCode";					// 넥사크로에서 transaction을 구분하기 위한 id값 이 id는 차후 fnCallback 함수에서 쓰인다.
         	var strSvcUrl	= "selectCommonCode.do";				// Java Controller에서 이 주소를 식별하여 요청을 처리한다.
         	var inData		= "ds_search = ds_searchCombo";			// 서버로 전송할 데이터셋 세팅 = 문자 기준 왼쪽이 서버, 오른쪽이 프론트 데이터셋이다.
-        															// 프론트의 ds_searchCombo를 서버의 ds_search 값을 대입하겠다는 의미이다.
+        															// 프론트의 ds_searchCombo를 서버의 ds_search 값을 대입하겠다는 의미이다. (서버 <- 프론트값)
         															// 서버측(.java)에도 = 기준 왼쪽 데이터셋명(ds_search)과 반드시! 동일하게 명명해야 한다.
 
         	var outData		= "ds_ordStatCombo = ds_commonCode";	// 서버로부터 값을 전달받을 데이터셋 세팅
         															// 위와는 반대로 = 문자 기준 왼쪽이 프론트 오른쪽이 서버 데이터셋이다.
-        															// 서버의 ds_commonCode 서버의 ds_ordStatCombo로 값을 대입하겠다는 의미이다.
+        															// 서버의 ds_commonCode를 프론트의 ds_ordStatCombo로 값을 대입하겠다는 의미이다. (프론트값 <- 서버)
         															// 서버측(.java)에도 = 기준 오른쪽 데이터셋명(ds_commonCode)과 반드시! 동일하게 명명해야 한다.
         	var strArg		= "";									// 데이터셋이 아닌 값을 보낼때 쓰는 필드지만 데이터셋을 쓰는걸로 통일하자.
         	var callBackFnc	= "fnCallback"; // 프레임웍 사이클의 9번에 해당한다. 서버로 부터 값을 받은 이후 프론트에서 이행해야할 작업 코드를
@@ -273,12 +278,41 @@
 
         this.btn_updOrd_onclick = function(obj,e)
         {
-        	alert("주문 수정 실행");
+        	// alert("주문 수정 팝업 오픈");
+        	// 그리드에서 현재 선택된 ROW의 ORD_NO 주문번호를 가져온다.
+        	var ordNo = this.ds_list.getColumn(this.ds_list.rowposition,"ORD_NO");
+
+        	var oArg = {ordNo:ordNo};
+        	var oOption = {};
+        	var sPopupCallBack = "fnPopupCallback";
+        	this.gfnOpenPopup("popup","Board::OB_001_02.xfdl",oArg,sPopupCallBack,oOption);
         };
 
         this.btn_delOrd_onclick = function(obj,e)
         {
-        	alert("주문 삭제 실행");
+        	// alert("주문 삭제 진행");
+        	// 그리드에서 현재 선택된 ROW의 ORD_NO 주문번호를 가져온다.
+        	var ordNo = this.ds_list.getColumn(this.ds_list.rowposition, "ORD_NO");
+
+        	// 서버로 전송하기 위한 데이터셋 세팅
+        	this.ds_delList.clearData();
+        	this.ds_delList.addRow();
+        	this.ds_delList.setColumn(0,"ORD_NO",ordNo);
+
+        	// 서버로 deleteOrdList.do라는 URL 요청에 ds_delList값을 담아 전송한다.
+        	var strSvcId	= "deleteOrdList";
+        	var strSvcUrl	= "deleteOrdList.do";
+        	var inData		= "ds_delList = ds_delList";	// 서버가 프론트에게 받음(왼쪽이 서버, 오른쪽이 프론트)
+        	var outData		= "";	// 서버로부터 받을 값은 따로 없으니 생략하자.
+        	var strArg		= "";
+        	var callBackFnc	= "fnCallback";
+
+        	this.gfnTransaction( strSvcId  ,
+        						 strSvcUrl ,
+        						 inData  ,
+        						 outData ,
+        						 strArg  ,
+        						 callBackFnc);
         };
 
         this.grd_ordList_oncellclick = function(obj,e)
@@ -296,12 +330,21 @@
         *********************************************************************************************************/
         this.fnCallback = function(svcID, errorCode, errorMsg)
         {
+        	if(errorCode < 0) {
+        		alert("작업 실패 에러 코드 : " + errorCode);
+        		return 0;
+        	}
+
         	switch(svcID)
         	{
         		case "selectCommonCode":
         			this.ds_ordStatCombo.insertRow(0); //0번째 Row에 라인 삽입 추가
         			this.ds_ordStatCombo.setColumn(0, "CD_VAL1",""); // 해당 ROW에 값 추가
         			this.ds_ordStatCombo.setColumn(0, "CD_NM1", "전체");
+        			break;
+
+        		case "deleteOrdList":
+        			alert("삭제 완료");
         			break;
         	}
         };

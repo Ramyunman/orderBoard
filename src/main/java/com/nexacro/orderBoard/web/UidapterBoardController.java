@@ -51,6 +51,24 @@ public class UidapterBoardController {
 	@Autowired(required = true)
 	private UidapterBoardService uidapterSampleService;
 	
+	@RequestMapping(value = "/orderBoard/deleteOrdList.do")
+	public NexacroResult deleteOrdList(@ParamDataSet(name = "ds_delList") Map<String,Object> ds_delList) throws NexacroException {
+		
+		NexacroResult result = new NexacroResult();	// return 값을 세팅하기 위한 객체 생성
+		uidapterSampleService.deleteOrdList(ds_delList);	// 요청 처리를 Service로 이관
+															
+		return result;	// 회신
+	}
+	
+	@RequestMapping(value = "/orderBoard/updateOrdList.do")
+	public NexacroResult updateOrdList(@ParamDataSet(name = "ds_updOrd") Map<String,Object> ds_updOrd) throws NexacroException {
+		
+		NexacroResult result = new NexacroResult();	// return 값을 세팅하기 위한 객체 생성
+		uidapterSampleService.updateOrdList(ds_updOrd);	// 요청 처리를 Service로 이관
+															
+		return result;	// 회신
+	}
+	
 	@RequestMapping(value = "/orderBoard/insertOrdList.do")
 	public NexacroResult insertOrdList(@ParamDataSet(name = "ds_regOrd") Map<String,Object> ds_regOrd) throws NexacroException {
 		

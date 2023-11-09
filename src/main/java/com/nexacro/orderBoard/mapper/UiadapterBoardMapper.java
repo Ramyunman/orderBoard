@@ -55,4 +55,8 @@ public interface UiadapterBoardMapper {
 	public void insertCust(Map<String, Object> ds_regOrd);	// 신규 고객 INSERT
 	
 	public void insertOrd(Map<String, Object> ds_regOrd);	// 신규 주문 INSERT
+
+	public void updateOrd(Map<String, Object> ds_updOrd);	// 주문 수정
+
+	public void deleteOrd(Map<String, Object> ds_delList);	// 주문 삭제
 }
